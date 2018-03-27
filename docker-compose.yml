@@ -1,0 +1,10 @@
+
+version: '3'
+services:
+  big-earl-builder:
+    build: .
+    volumes:
+      - ./output:/go/src/github.com/micahlee/big-earl-cli/output
+    environment:
+      GOOS:
+      GOARCH:

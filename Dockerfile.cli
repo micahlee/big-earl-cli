@@ -1,0 +1,11 @@
+FROM golang:1.8
+
+RUN mkdir -p /go/src/github.com/micahlee/big-earl-cli/output
+WORKDIR /go/src/github.com/micahlee/big-earl-cli
+
+COPY . .
+
+RUN go get && \
+    go build -o $GOPATH/bin/big-earl
+
+ENTRYPOINT ["/bin/bash"]
