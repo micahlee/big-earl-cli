@@ -28,22 +28,25 @@ func NewUrlTransformAction(converter UrlConversion, openInBrowser *bool, copyToC
 
 		// Ensure the URL input argument is present
 		if c.NArg() < 1 {
-			var err error
 
-			reader := bufio.NewReader(os.Stdin)
-			text, err := reader.ReadString('\n')
-			if err != nil {
-				return err
+			// Check to see if the input is being piped in
+			stat, _ := os.Stdin.Stat()
+			if (stat.Mode() & os.ModeCharDevice) == 0 {
+				var err error
+				reader := bufio.NewReader(os.Stdin)
+				text, err := reader.ReadString('\n')
+				if err != nil {
+					return err
+				}
+
+				inputUrl = strings.TrimSpace(text)
+			} else {
+				// Otherwise raise an error that the URL is missing
+				cli.ShowCommandHelp(c, "shrink")
+				return cli.NewExitError("ERROR: Missing argument for short URL", 1)
 			}
-
-			inputUrl = strings.TrimSpace(text)
 		} else {
 			inputUrl = c.Args().First()
-		}
-
-		if inputUrl == "" {
-			cli.ShowCommandHelp(c, "shrink")
-			return cli.NewExitError("ERROR: Missing argument for short URL", 1)
 		}
 
 		// Validate that the input is a URL
